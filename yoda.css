@@ -1,0 +1,180 @@
+/* Main stylesheet */
+
+/*#region*/ /* NON GRAPH OVERALL LAYOUT */
+
+#yoda_title {
+  font-size: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: absolute;
+  left: 250px;
+  top: 10px;
+  margin: 0px;
+  z-index: 2;
+  cursor: default;
+}
+
+#yoda_about {
+  font-size: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: absolute;
+  right: 250px;
+  top: 10px;
+  margin: 0px;
+  z-index: 2;
+  cursor: pointer;
+}
+
+#yoda_about:hover {
+  opacity: 0.5;
+}
+
+#yoda_everything {
+  width: 100%;
+  position: relative;
+}
+
+#yoda_everything {
+  width: 1200px;
+  height: 800px;
+  position: relative;
+  margin: 0px auto;
+}
+
+#yoda_left_bar {
+  position: absolute;
+  left: 80px;
+  top: 100px;
+  width: 220px;
+  height: 750px;
+}
+
+#yoda_right_bar {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  width: 200px;
+  height: 800px;
+}
+
+#yoda_violin_canvas {
+  position: absolute;
+  left: 0px;
+  top: 100px;
+  width: 150px;
+  height: 500px;
+  background-color: aqua;
+}
+
+#yoda_bottom_bar {
+  position: absolute;
+  left: 200px;
+  top: 600px;
+  width: 800px;
+  height: 200px;
+}
+
+#yoda_canvas {
+  position: absolute;
+  left: 300px;
+  top: 0px;
+  width: 800px;
+  height: 600px;
+}
+
+#yoda_svg {
+  position: absolute;
+  left: 300px;
+  top: 0px;
+  width: 900px;
+  height: 700px;
+}
+
+/*#endregion*/
+
+/*#region*/ /* LEFT BAR */
+
+.allele_div {
+  width: 220px;
+  height: 32px;
+  margin: 0px;
+  position: relative;
+  font-size: 19px;
+  text-align: center;
+  cursor: default;
+}
+
+.allele_content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  float:left;
+}
+
+.allele_color_button {
+  width: 21px;
+  height: 21px;
+  margin-top: 3px;
+  border-radius: 50%;
+  border: 2px solid black;
+}
+
+.allele_color_button:hover {
+  opacity:0.5;
+}
+
+.allele {
+  width: 25px;
+  height: inherit;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+.allele:hover {
+  opacity: 0.5;
+}
+
+.allele_pos {
+  width: 40px;
+  height: inherit;
+}
+
+.allele_number {
+  width: 30px;
+  height: inherit;
+}
+
+.allele_freq {
+  width: 50px;
+  height: inherit;
+}
+
+.active_allele {
+  background-color: #eb8989;
+}
+
+.locked_allele {
+  border: 2px solid black;
+}
+
+.colored_allele {
+  background-color: #CCC;
+}
+
+.geno_label { 
+  font: 20px sans-serif; 
+  fill: black; 
+  text-anchor: middle;
+}
+
+#kd_axis {
+  font-size: 18px;
+}
+
+#kd_axis_label {
+  font: 20px sans-serif; 
+  fill: black; 
+  text-anchor: middle;
+}
+
+/*#endregion*/
