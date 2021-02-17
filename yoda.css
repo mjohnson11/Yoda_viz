@@ -24,6 +24,39 @@
   cursor: pointer;
 }
 
+.antibody_button {
+  font-size: 24px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100px;
+  height: 30px;
+  position: absolute;
+  top: 10px;
+  text-anchor: middle;
+  text-align: center;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.antibody_button:hover {
+  opacity: 0.7;
+}
+
+.antibody_active {
+  outline: 2px solid black;
+}
+
+#antibody_H1 {
+  left: 400px;
+}
+
+#antibody_H3 {
+  left: 550px;
+}
+
+#antibody_FluB {
+  left: 700px;
+}
+
 #yoda_about:hover {
   opacity: 0.5;
 }

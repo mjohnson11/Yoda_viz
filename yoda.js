@@ -26,6 +26,9 @@ for (let i=0; i<alleles.length; i++) {
 
 var color_wheel = ["#0173b2","#de8f05","#029e73","#d55e00","#cc78bc","#ca9161","#ece133","#56b4e9"];
 
+var color_variants = {'0000000000000000': '#FF0000',
+                      '1111111111111111': '#0000FF'};
+
 var color_wheel_rgb = [];
 for (let c of color_wheel) {
   color_wheel_rgb.push(d3.color(c));
@@ -36,8 +39,8 @@ var use_data;
 
 var xs = d3.scaleLinear().domain([-350,350]).range([0, 600]);
 var ys = d3.scaleLinear().domain([350,-350]).range([0,600]);
-var x_by_kd = d3.scaleLinear().domain([7,10]).range([630,790]);
 var violin_y = d3.scaleLinear().domain([0,1]).range([100,600]);
+var x_by_kd = d3.scaleLinear().domain([7,10]).range([630,790]);
 var color_by_kd = d3.scaleSequential(d3.interpolateViridis).domain([7,10]);
 var color_by_freq = d3.scaleSequential(d3.interpolateRgb("white", "red")).domain([0,1]);
 var canvasWidth = 800;
@@ -49,6 +52,9 @@ var colorMap = {};
 var hoverMap = [];
 
 var data_by_variant = {};
+
+var kd_var = 'H1';
+var kd_axis;
 
 var violin_y_pos_counter = {}; //formatted like genotype: [y_baseline_position, dict from ypos to counter of pixels (for y displacement)]
 
@@ -126,7 +132,7 @@ function color_data() {
     let v = d['variant'];
     let tmp_color;
     if (alleles_colored.length==0) {
-      tmp_color = d['H1_log10Kd_color'];
+      tmp_color = d['kd_color'];
     } else {
       let color_index = 0;
       for (let i=0; i<alleles_colored.length; i++) {
@@ -358,6 +364,10 @@ function setup_left_bar() {
       .html('');
 }
 
+function svg_diamond(x, y, size) {
+  return String(x)+','+String(y-size)+' '+String(x-size)+','+String(y)+' '+String(x)+','+String(y+size)+' '+String(x+size)+','+String(y);
+}
+
 function setup_interaction() {
   update_hover_map();
   let hover_circles = [];
@@ -368,8 +378,15 @@ function setup_interaction() {
         .attr('cx', 100)
         .attr('cy', 100)
         .attr('fill', 'none')
-        .attr('stroke', 'red')
+        .attr('stroke', '#FF0088')
         .attr('opacity', 0))
+  }
+  for (let v of Object.keys(color_variants)) {
+    d3.select("#yoda_svg")
+      .append('polygon')
+        .attr('points', svg_diamond(xs(data_by_variant[v]['fdl_x']), ys(data_by_variant[v]['fdl_y']), 6))
+        .attr('fill', color_variants[v])
+        .attr('stroke', 'none');
   }
   
   d3.select("#yoda_svg").on('mousemove', function(event, d) {
@@ -395,7 +412,7 @@ function setup_interaction() {
     }
   });
   //adding violin plot axis
-  d3.select("#yoda_svg").append('g')
+  kd_axis = d3.select("#yoda_svg").append('g')
     .attr('id', 'kd_axis')
     .attr("transform", "translate(0,"+String(canvasHeight-10)+")").call(d3.axisBottom().scale(x_by_kd).ticks(4));
   d3.select('#yoda_svg')
@@ -425,6 +442,29 @@ function get_violin_y(xpos, d) {
   return Math.round(d['ypos_base'] + ((tmp_dict[xpos] % 2)-0.5)*0.1*tmp_dict[xpos]);
 }
 
+function kd_for(kd_var_tmp) {
+  kd_var = kd_var_tmp;
+  if (kd_var == 'H1') {
+    x_by_kd = d3.scaleLinear().domain([7,10]).range([630,790]);
+    color_by_kd = d3.scaleSequential(d3.interpolateViridis).domain([7,10]);
+  } else {
+    x_by_kd = d3.scaleLinear().domain([6,9]).range([630,790]);
+    color_by_kd = d3.scaleSequential(d3.interpolateViridis).domain([6,9]);
+  }
+  kd_axis.remove();
+  kd_axis = d3.select("#yoda_svg").append('g')
+    .attr('id', 'kd_axis')
+    .attr("transform", "translate(0,"+String(canvasHeight-10)+")").call(d3.axisBottom().scale(x_by_kd).ticks(4));
+  d3.selectAll('.antibody_button').classed('antibody_active', false);
+  d3.select('#antibody_'+kd_var).classed('antibody_active', true);
+  for (let d of main_data) {
+    d['kdx'] = Math.floor(x_by_kd(Number(d[kd_var+'_log10Kd'])*-1));
+    d['kd_color'] = d3.color(color_by_kd(Number(d[kd_var+'_log10Kd'])*-1));
+  }
+  color_data();
+  draw_data();
+}
+
 function setup() {
   console.log('starting yoda viz...')
   setup_left_bar();
@@ -443,8 +483,8 @@ function setup() {
       d['y_exact'] = ys(Number(d['fdl_y']));
       d['x'] = Math.floor(d['x_exact']); // TODO: make pixel interpretation technically correct
       d['y'] = Math.floor(d['y_exact']);
-      d['kdx'] = Math.floor(x_by_kd(Number(d['H1_log10Kd'])*-1));
-      d['H1_log10Kd_color'] = d3.color(color_by_kd(Number(d['H1_log10Kd'])*-1));
+      d['kdx'] = Math.floor(x_by_kd(Number(d[kd_var+'_log10Kd'])*-1));
+      d['kd_color'] = d3.color(color_by_kd(Number(d[kd_var+'_log10Kd'])*-1));
     }
     color_data();
     draw_data();
