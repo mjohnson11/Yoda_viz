@@ -17,16 +17,29 @@
 </head>
 <body onload="setup()">
   <div id="yoda_everything">
-    <div class='antibody_button antibody_active' id='antibody_H1' onclick="kd_for('H1')">H1</div>
-    <div class='antibody_button' id='antibody_H3' onclick="kd_for('H3')">H3</div>
-    <div class='antibody_button' id='antibody_FluB' onclick="kd_for('FluB')">FluB</div>
+    <div class='antigen_button antigen_active' id='antigen_H1' onclick="kd_for('H1')">H1</div>
+    <div class='antigen_button' id='antigen_H3' onclick="kd_for('H3')">H3</div>
+    <div class='antigen_button' id='antigen_FluB' onclick="kd_for('FluB')">FluB</div>
     <p id='yoda_title'>YODA</p>
-    <p id='yoda_about'>ABOUT</p>
+    <p id='yoda_about' onclick="toggle_about()">ABOUT</p>
     <div id="yoda_left_bar"></div>
     <div id="yoda_right_bar"></div>
     <div id="yoda_bottom_bar"></div>
     <canvas id="yoda_canvas" width="800" height="600"></canvas>
     <svg id="yoda_svg" width="800" height="700"></svg>
+    <div id="yoda_about_div">
+      <div id="about_x_out" onclick="toggle_about()">X</div>
+      <h2>Yeast antibody display project</h2>
+      <p>
+        Using sort-seq technologies, we measured the Kd of a set of antibody
+        genotypes, which are combinations of 16 mutations that separate a germline genotype from
+        a somatic genotype. The graph here shows a mapping of these points in 2D space based on
+        both genotype similarity and phenotype (Kd) similarity. You can hover and click-and-drag
+        on the graph to see genotypes (and their corresponding phenotypes in the plot at right),
+        and you can click on mutations on the left to lock them or color the points based on the
+        alleles at those genotypes. 
+      </p>
+    </div>
   </div>
 </body>
 </html>

@@ -455,8 +455,8 @@ function kd_for(kd_var_tmp) {
   kd_axis = d3.select("#yoda_svg").append('g')
     .attr('id', 'kd_axis')
     .attr("transform", "translate(0,"+String(canvasHeight-10)+")").call(d3.axisBottom().scale(x_by_kd).ticks(4));
-  d3.selectAll('.antibody_button').classed('antibody_active', false);
-  d3.select('#antibody_'+kd_var).classed('antibody_active', true);
+  d3.selectAll('.antigen_button').classed('antigen_active', false);
+  d3.select('#antigen_'+kd_var).classed('antigen_active', true);
   for (let d of main_data) {
     d['kdx'] = Math.floor(x_by_kd(Number(d[kd_var+'_log10Kd'])*-1));
     d['kd_color'] = d3.color(color_by_kd(Number(d[kd_var+'_log10Kd'])*-1));
@@ -490,4 +490,10 @@ function setup() {
     draw_data();
     setup_interaction();
   });
+}
+
+
+function toggle_about() {
+  let new_style = (d3.select('#yoda_about_div').style('display')=='none') ? 'block' : 'none';
+  d3.select('#yoda_about_div').style('display', new_style);
 }
