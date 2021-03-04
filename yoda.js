@@ -37,8 +37,8 @@ for (let c of color_wheel) {
 var main_data;
 var use_data;
 
-var xs = d3.scaleLinear().domain([-350,350]).range([0, 600]);
-var ys = d3.scaleLinear().domain([350,-350]).range([0,600]);
+var xs;
+var ys;
 var violin_y = d3.scaleLinear().domain([0,1]).range([100,600]);
 var x_by_kd = d3.scaleLinear().domain([7,10]).range([630,790]);
 var color_by_kd = d3.scaleSequential(d3.interpolateViridis).domain([7,10]);
@@ -465,17 +465,34 @@ function kd_for(kd_var_tmp) {
   draw_data();
 }
 
-function setup() {
+function setup(fpath) {
   console.log('starting yoda viz...')
   setup_left_bar();
   
-  d3.csv('data/20210128_9114.csv').then(function(data) {
+  d3.csv(fpath).then(function(data) {
     canvas = document.getElementById("yoda_canvas");
     ctx = canvas.getContext("2d");
     canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
     main_data = data;
     use_data = main_data;
     console.log(data.slice(0,10));
+    let x_domain = d3.extent(main_data.map(d=>parseFloat(d.fdl_x)));
+    let y_domain = d3.extent(main_data.map(d=>parseFloat(d.fdl_y)));
+    let x_d_dif = x_domain[1]-x_domain[0];
+    let y_d_dif = y_domain[1]-y_domain[0];
+    if (x_d_dif > y_d_dif) {
+      y_domain[0] = y_domain[0] - (x_d_dif-y_d_dif)/2 - x_d_dif/10; // first part makes scales equal (square), second is a buffer
+      y_domain[1] = y_domain[1] + (x_d_dif-y_d_dif)/2 + x_d_dif/10;
+      x_domain[0] = x_domain[0] - x_d_dif/10;
+      x_domain[1] = x_domain[1] + x_d_dif/10;
+    } else {
+      y_domain[0] = y_domain[0] - x_d_dif/10;
+      y_domain[1] = y_domain[1] + (x_d_dif-y_d_dif)/2 + x_d_dif/10;
+      x_domain[0] = x_domain[0] - (y_d_dif-x_d_dif)/2 - x_d_dif/10;
+      x_domain[1] = x_domain[1] + (y_d_dif-x_d_dif)/2 + x_d_dif/10;
+    }
+    xs = d3.scaleLinear().domain(x_domain).range([0, 600]);
+    ys = d3.scaleLinear().domain(y_domain).range([600,0]);
     for (let d of main_data) {
       data_by_variant[d['variant']] = d;
       d['geno_str'] = ''; //empty because no alleles are colored yet
