@@ -110,7 +110,7 @@
 #yoda_left_bar {
   position: absolute;
   left: 80px;
-  top: 100px;
+  top: 50px;
   width: 220px;
   height: 750px;
 }
@@ -159,6 +159,11 @@
 /*#endregion*/
 
 /*#region*/ /* LEFT BAR */
+
+#total_var_count {
+  padding:10px;
+  font-size: 20px;
+}
 
 .allele_div {
   width: 220px;

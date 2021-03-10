@@ -124,8 +124,14 @@ function draw_brush_only() {
   ctx.putImageData(canvasData, 0, 0);
 }
 
-function color_data() {
+function reset_violin_y() {
   violin_y_pos_counter = {}
+  for (let d of use_data) {
+    d['kdy'] = get_violin_y(d['kdx'], d);
+  }
+}
+
+function color_data(first_time=false) {
   for (let d of main_data) {
     let geno_str = ''; // genotype string
     let ypos_counter = 0;
@@ -148,9 +154,9 @@ function color_data() {
     d['r'] = tmp_color['r'];
     d['g'] = tmp_color['g'];
     d['b'] = tmp_color['b'];
-    d['a'] = 255;
-    d['kdy'] = get_violin_y(d['kdx'], d);
+    if (first_time) d['a'] = 255;
   }
+  reset_violin_y();
   d3.selectAll('.geno_label').remove();
   for (let i=0; i<alleles_colored.length; i++) {
     // making the ylabels for the violin plot
@@ -245,13 +251,13 @@ function calc_percentages(variants) {
 function process_brush(event) {
   let extent = event.selection;
   let variants_in_selection = [];
-  if (extent[0][0] == extent[1][0]) {
-    for (let d of use_data) {
+  if (extent[0][0] == extent[1][0]) { // zero area brush, undo it all
+    for (let d of main_data) {
       d['a'] = 255;
       variants_in_selection.push(d['variant']);
     }
   } else {
-    for (let d of use_data) {
+    for (let d of main_data) {
       if ((extent[0][0] <= d['x'] && d['x'] <= extent[1][0] && extent[0][1] <= d['y'] && d['y'] <= extent[1][1]) ||
           (extent[0][0] <= d['kdx'] && d['kdx'] <= extent[1][0] && extent[0][1] <= d['kdy'] && d['kdy'] <= extent[1][1])) {
         d['a'] = 255;
@@ -261,6 +267,8 @@ function process_brush(event) {
       }
     }
   }
+  this.variants_count = use_data.filter(d => d.a==255).length;
+  d3.select('#total_var_count').html('# genotypes: ' + String(this.variants_count))
   if (variants_in_selection.length>0) calc_percentages(variants_in_selection);
   draw_brush_only();
 }
@@ -274,6 +282,9 @@ function filter_data() {
     }
     return true;
   });
+  this.variants_count = use_data.filter(d => d.a==255).length;
+  d3.select('#total_var_count').html('# genotypes: ' + String(this.variants_count))
+  reset_violin_y();
   draw_data();
   update_hover_map();
 }
@@ -319,6 +330,12 @@ function update_hover_map() {
 }
 
 function setup_left_bar() {
+
+  d3.selectAll('#yoda_left_bar')
+    .append('div')
+      .attr('id', 'total_var_count')
+      .html('# genotypes: ' + String(this.variants_count));
+
   d3.select('#yoda_left_bar').selectAll('.allele_div')
     .data(alleles)
     .enter()
@@ -356,7 +373,7 @@ function setup_left_bar() {
       .on('click', function(e, d) { flip_allele(alleles.indexOf(d), '1'); })
       .attr('id', function(d, i) { return 'new_allele_'+String(i); })
       .html(function(d) { return d.split('_')[2]; });
-
+  
   d3.selectAll('.allele_div')
     .append('div')
       .attr('class', 'allele_content allele_freq')
@@ -442,6 +459,7 @@ function get_violin_y(xpos, d) {
   return Math.round(d['ypos_base'] + ((tmp_dict[xpos] % 2)-0.5)*0.1*tmp_dict[xpos]);
 }
 
+
 function kd_for(kd_var_tmp) {
   kd_var = kd_var_tmp;
   if (kd_var == 'H1') {
@@ -467,7 +485,6 @@ function kd_for(kd_var_tmp) {
 
 function setup(fpath) {
   console.log('starting yoda viz...')
-  setup_left_bar();
   
   d3.csv(fpath).then(function(data) {
     canvas = document.getElementById("yoda_canvas");
@@ -493,6 +510,7 @@ function setup(fpath) {
     }
     xs = d3.scaleLinear().domain(x_domain).range([0, 600]);
     ys = d3.scaleLinear().domain(y_domain).range([600,0]);
+    this.variants_count = main_data.length;
     for (let d of main_data) {
       data_by_variant[d['variant']] = d;
       d['geno_str'] = ''; //empty because no alleles are colored yet
@@ -503,7 +521,8 @@ function setup(fpath) {
       d['kdx'] = Math.floor(x_by_kd(Number(d[kd_var+'_log10Kd'])*-1));
       d['kd_color'] = d3.color(color_by_kd(Number(d[kd_var+'_log10Kd'])*-1));
     }
-    color_data();
+    setup_left_bar();
+    color_data(first_time=true);
     draw_data();
     setup_interaction();
   });
