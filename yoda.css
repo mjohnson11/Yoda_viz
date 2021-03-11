@@ -143,7 +143,7 @@
 #yoda_canvas {
   position: absolute;
   left: 300px;
-  top: 0px;
+  top: 40px;
   width: 800px;
   height: 600px;
 }
@@ -151,9 +151,9 @@
 #yoda_svg {
   position: absolute;
   left: 300px;
-  top: 0px;
+  top: 40px;
   width: 900px;
-  height: 700px;
+  height: 600px;
 }
 
 /*#endregion*/
@@ -246,6 +246,12 @@
 #kd_axis_label {
   font: 20px sans-serif; 
   fill: black; 
+  text-anchor: middle;
+}
+
+.germ_som_text {
+  font: 20px sans-serif; 
+  fill: #555555; 
   text-anchor: middle;
 }
 

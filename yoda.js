@@ -29,6 +29,9 @@ var color_wheel = ["#0173b2","#de8f05","#029e73","#d55e00","#cc78bc","#ca9161","
 var color_variants = {'0000000000000000': '#FF0000',
                       '1111111111111111': '#0000FF'};
 
+var annotate_variants = {'0000000000000000': 'Germline',
+                         '1111111111111111': 'Somatic'};
+
 var color_wheel_rgb = [];
 for (let c of color_wheel) {
   color_wheel_rgb.push(d3.color(c));
@@ -39,7 +42,7 @@ var use_data;
 
 var xs;
 var ys;
-var violin_y = d3.scaleLinear().domain([0,1]).range([100,600]);
+var violin_y = d3.scaleLinear().domain([0,1]).range([50,550]);
 var x_by_kd = d3.scaleLinear().domain([7,10]).range([630,790]);
 var color_by_kd = d3.scaleSequential(d3.interpolateViridis).domain([7,10]);
 var color_by_freq = d3.scaleSequential(d3.interpolateRgb("white", "red")).domain([0,1]);
@@ -295,6 +298,8 @@ function highlight_variant(variant) {
       d3.select('#wt_allele_'+String(i)).classed('active_allele', variant[i]=='0');
       d3.select('#new_allele_'+String(i)).classed('active_allele', variant[i]=='1');
     }
+  } else {
+    d3.selectAll('.allele').classed('active_allele', false);
   }
 
 }
@@ -398,6 +403,7 @@ function setup_interaction() {
         .attr('stroke', '#FF0088')
         .attr('opacity', 0))
   }
+  /* old coloring of germline and somatic
   for (let v of Object.keys(color_variants)) {
     d3.select("#yoda_svg")
       .append('polygon')
@@ -405,6 +411,46 @@ function setup_interaction() {
         .attr('fill', color_variants[v])
         .attr('stroke', 'none');
   }
+  */
+  
+  d3.select("#yoda_svg")
+    .append('text')
+      .attr('class', 'germ_som_text')
+      .attr('dominant-baseline', 'hanging')
+      .attr('x', xs(data_by_variant['0000000000000000']['fdl_x'])-50)
+      .attr('y', 463)
+      .style('inline-size', '100px')
+      .html('Germline');
+
+  d3.select("#yoda_svg")
+    .append('line')
+      .attr('class', 'germ_som_line')
+      .attr('stroke', '#555555')
+      .attr('stroke-width', 1)
+      .attr('x1', xs(data_by_variant['0000000000000000']['fdl_x'])-50)
+      .attr('y1', 460)
+      .attr('x2', xs(data_by_variant['0000000000000000']['fdl_x']))
+      .attr('y2', ys(data_by_variant['0000000000000000']['fdl_y']));
+
+  d3.select("#yoda_svg")
+    .append('text')
+      .attr('class', 'germ_som_text')
+      .attr('dominant-baseline', 'hanging')
+      .attr('x', xs(data_by_variant['1111111111111111']['fdl_x'])+15)
+      .attr('y', 463)
+      .style('inline-size', '100px')
+      .html('Somatic');
+
+  d3.select("#yoda_svg")
+    .append('line')
+      .attr('class', 'germ_som_line')
+      .attr('stroke', '#555555')
+      .attr('stroke-width', 1)
+      .attr('x1', xs(data_by_variant['1111111111111111']['fdl_x'])+15)
+      .attr('y1', 460)
+      .attr('x2', xs(data_by_variant['1111111111111111']['fdl_x']))
+      .attr('y2', ys(data_by_variant['1111111111111111']['fdl_y']));
+  
   
   d3.select("#yoda_svg").on('mousemove', function(event, d) {
     let [mx, my] = d3.pointer(event, this);
@@ -431,12 +477,12 @@ function setup_interaction() {
   //adding violin plot axis
   kd_axis = d3.select("#yoda_svg").append('g')
     .attr('id', 'kd_axis')
-    .attr("transform", "translate(0,"+String(canvasHeight-10)+")").call(d3.axisBottom().scale(x_by_kd).ticks(4));
+    .attr("transform", "translate(0,"+String(canvasHeight-50)+")").call(d3.axisBottom().scale(x_by_kd).ticks(4));
   d3.select('#yoda_svg')
     .append('text')
       .attr('id', 'kd_axis_label')
       .attr('x', x_by_kd(8.5))
-      .attr('y', canvasHeight+35)
+      .attr('y', canvasHeight-5)
       .html('-log10Kd');
   // adding brushing https://www.d3-graph-gallery.com/graph/interactivity_brush.html
   d3.select("#yoda_svg")
