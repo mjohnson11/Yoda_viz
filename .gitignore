@@ -1,2 +1,4 @@
 /design_background/
 .DS_Store
+data_process
+.ipynb_checkpoints

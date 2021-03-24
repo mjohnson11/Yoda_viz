@@ -132,18 +132,18 @@
   background-color: aqua;
 }
 
-#yoda_bottom_bar {
+#yoda_ngl_viewer {
   position: absolute;
-  left: 200px;
-  top: 700px;
-  width: 800px;
+  left: 60px;
+  top: 625px;
+  width: 200px;
   height: 200px;
 }
 
 #yoda_canvas {
   position: absolute;
   left: 300px;
-  top: 0px;
+  top: 40px;
   width: 800px;
   height: 600px;
 }
@@ -151,9 +151,9 @@
 #yoda_svg {
   position: absolute;
   left: 300px;
-  top: 0px;
-  width: 900px;
-  height: 700px;
+  top: 40px;
+  width: 800px;
+  height: 850px;
 }
 
 /*#endregion*/
@@ -246,6 +246,12 @@
 #kd_axis_label {
   font: 20px sans-serif; 
   fill: black; 
+  text-anchor: middle;
+}
+
+.germ_som_text {
+  font: 20px sans-serif; 
+  fill: #555555; 
   text-anchor: middle;
 }
 

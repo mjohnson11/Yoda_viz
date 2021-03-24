@@ -13,9 +13,10 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="yoda.js"></script>
+  <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
 
 </head>
-<body onload="setup('data/umap_pathways_9114.csv')">
+<body onload="read_files('data/umap_pathways_9114.csv')">
   <div id="yoda_everything">
     <div class='antigen_button antigen_active' id='antigen_H1' onclick="kd_for('H1')">H1</div>
     <div class='antigen_button' id='antigen_H3' onclick="kd_for('H3')">H3</div>
@@ -24,9 +25,9 @@
     <p id='yoda_about' onclick="toggle_about()">ABOUT</p>
     <div id="yoda_left_bar"></div>
     <div id="yoda_right_bar"></div>
-    <div id="yoda_bottom_bar"></div>
+    <div id="yoda_ngl_viewer"></div>
     <canvas id="yoda_canvas" width="800" height="600"></canvas>
-    <svg id="yoda_svg" width="800" height="700"></svg>
+    <svg id="yoda_svg" width="800" height="800"></svg>
     <div id="yoda_about_div">
       <div id="about_x_out" onclick="toggle_about()">X</div>
       <h2>Yeast antibody display project</h2>
