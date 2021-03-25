@@ -17,6 +17,10 @@ var alleles = [
   'Y_113_S'];
 
 var allele_divs = [];
+var v;
+
+var variants_in_selection;
+var variant_selected_index = 0;
 
 var alleles_fixed = [];
 var alleles_colored = [];
@@ -41,6 +45,11 @@ var main_data;
 var main_svg;
 var use_data;
 var kd_data = {'fluB': {}, 'H1': {}, 'H3': {}};
+var kd_conc_map = {
+  'H3': [-14, -11, -10.5, -10, -9.5, -9, -8.5,-8, -7.5, -7, -6.5, -6],
+  'fluB': [-14, -11, -10.5, -10, -9.5, -9, -8.5,-8, -7.5, -7, -6.5, -6],
+  'H1': [-14, -12, -11.5, -11, -10.5, -10, -9.5, -9, -8.5,-8, -7.5, -7]
+}
 
 var xs;
 var ys;
@@ -48,7 +57,7 @@ var violin_y = d3.scaleLinear().domain([0,1]).range([50,550]);
 var x_by_kd = d3.scaleLinear().domain([7,10]).range([630,790]);
 var color_by_kd = d3.scaleSequential(d3.interpolateViridis).domain([7,10]);
 var color_by_freq = d3.scaleSequential(d3.interpolateRgb("white", "red")).domain([0,1]);
-var kd_curve_x = d3.scaleLinear().domain([-12,0]).range([50,250]);
+var kd_curve_x = d3.scaleLinear().domain([-15,-5]).range([100,300]);
 var kd_curve_y = d3.scaleLinear().domain([2,5]).range([750,600]);
 
 var canvasWidth = 800;
@@ -58,6 +67,8 @@ var ctx;
 var canvasData;
 var colorMap = {};
 var hoverMap = [];
+
+var click_circles = [];
 
 var data_by_variant = {};
 
@@ -256,7 +267,7 @@ function calc_percentages(variants) {
 // Function that is triggered when brushing is performed
 function process_brush(event) {
   let extent = event.selection;
-  let variants_in_selection = [];
+  variants_in_selection = [];
   if (extent[0][0] == extent[1][0]) { // zero area brush, undo it all
     for (let d of main_data) {
       d['a'] = 255;
@@ -306,9 +317,33 @@ function highlight_variant(variant) {
   }
 }
 
+function iterate_over_points(which_way, shift_pressed) {
+  if (variants_in_selection.length>0) {
+    variant_selected_index += which_way;
+    if (variant_selected_index < 0) {
+      variant_selected_index = variants_in_selection.length-1;
+    } else if (variant_selected_index >= variants_in_selection.length) {
+      variant_selected_index = 0;
+    }
+    click_variant(variants_in_selection[variant_selected_index]);
+  }
+}
+
 function click_variant(variant) {
+  click_circles[0]
+    .attr('cx', xs(data_by_variant[variant]['fdl_x']))
+    .attr('cy', ys(data_by_variant[variant]['fdl_y']))
+    .attr('fill', colorMap[variant].formatHex())
+    .attr('opacity', 1);
+  click_circles[1]
+    .attr('cx', data_by_variant[variant]['kdx'])
+    .attr('cy', data_by_variant[variant]['kdy'])
+    .attr('fill', colorMap[variant].formatHex())
+    .attr('opacity', 1);
+  variant_selected_index = variants_in_selection.indexOf(variant);
   console.log('clicked on', variant);
-  let tmp_row = kd_data[kd_var][variant];
+  let tmp_row = kd_data[kd_var].params({v_focus: variant}).filter((d,$) => d.variant == $.v_focus);
+  v = tmp_row;
   let suffixes = ['_x', '_y', ''];
   //main_svg.selectAll('.kd_curve_point').remove();
   main_svg.selectAll('.kd_curve_line').remove();
@@ -323,13 +358,25 @@ function click_variant(variant) {
         .attr('cy', kd_curve_y(tmp_row['c'+String(j)+suffixes[i]]))
         .attr('fill', color_wheel[i]);
       */
-      points.push([kd_curve_x(-j), kd_curve_y(tmp_row['c'+String(j)+suffixes[i]])]);
+      let xspot = kd_curve_x(kd_conc_map[kd_var][12-j]);
+      let yspot_val = tmp_row.get('c'+String(j)+suffixes[i], 0);
+      let yerr_zone = [yspot_val-tmp_row.get('e'+String(j)+suffixes[i], 0), yspot_val+tmp_row.get('e'+String(j)+suffixes[i], 0)];
+      points.push([xspot, kd_curve_y(yspot_val)]);
+      main_svg.append('path')
+        .attr('class', 'kd_curve_line')
+        .attr('stroke', color_wheel[i])
+        .attr('stroke-width', 1)
+        .attr('d', d3.line()([[xspot, kd_curve_y(yerr_zone[0])], [xspot, kd_curve_y(yerr_zone[1])]]));
     }
     main_svg.append('path')
       .attr('class', 'kd_curve_line')
       .attr('stroke', color_wheel[i])
       .attr('stroke-width', 2)
       .attr('d', d3.line()(points));
+
+    d3.select('#kd_curve_title').html(variant);
+
+    
   }
 }
 
@@ -422,7 +469,6 @@ function svg_diamond(x, y, size) {
 function setup_interaction() {
   update_hover_map();
   let hover_circles = [];
-  let click_circles = [];
   for (let i=0; i<2; i++) {
     hover_circles.push(main_svg.append('circle')
       .attr('r', 5)
@@ -515,18 +561,7 @@ function setup_interaction() {
     let hover_el = hoverMap[Math.round(mx)][Math.round(my)];
     if (hover_el) {
       if (hover_el['variant'] != 'none') {
-        let v = hover_el['variant'];
-        click_variant(v);
-        click_circles[0]
-          .attr('cx', hover_el['point_location'][0])
-          .attr('cy', hover_el['point_location'][1])
-          .attr('fill', colorMap[hover_el['variant']].formatHex())
-          .attr('opacity', 1);
-        click_circles[1]
-          .attr('cx', data_by_variant[v]['kdx'])
-          .attr('cy', data_by_variant[v]['kdy'])
-          .attr('fill', colorMap[hover_el['variant']].formatHex())
-          .attr('opacity', 1);
+        click_variant(hover_el['variant']);
       } else {
         highlight_variant('none');
         click_circles[0].attr('opacity', 0);
@@ -539,7 +574,7 @@ function setup_interaction() {
     .attr('id', 'kd_axis')
     .attr("transform", "translate(0,"+String(canvasHeight-50)+")").call(d3.axisBottom().scale(x_by_kd).ticks(4));
   main_svg.append('text')
-    .attr('id', 'kd_axis_label')
+    .attr('class', 'x_axis_label')
     .attr('x', x_by_kd(8.5))
     .attr('y', canvasHeight-5)
     .html('-log10Kd');
@@ -557,8 +592,36 @@ function setup_interaction() {
 
   main_svg.append('g')
     .attr('id', 'kd_curve_y_axis')
-    .attr("transform", "translate("+String(kd_curve_x(-13))+", 0)").call(d3.axisLeft().scale(kd_curve_y).ticks(4));
+    .attr("transform", "translate("+String(kd_curve_x(-15))+", 0)").call(d3.axisLeft().scale(kd_curve_y).ticks(4));
+
+  main_svg.append('text')
+    .attr('class', 'x_axis_label')
+    .attr('x', kd_curve_x(-10))
+    .attr('y', kd_curve_y(1))
+    .html('-log[HA], M');
+
+  main_svg.append('text')
+    .attr('id', 'kd_curve_title')
+    .attr('class', 'x_axis_label')
+    .attr('x', kd_curve_x(-10))
+    .attr('y', kd_curve_y(5.3))
+    .html('');
+
+  main_svg.append('text')
+    .attr('class', 'x_axis_label')
+    .attr('x', kd_curve_x(-18))
+    .attr('y', kd_curve_y(3.5))
+    .html('mean bin');
+
+  d3.select('body').on('keydown', function(e) {
+    if (['ArrowDown', 'ArrowRight'].indexOf(e.key)>-1) {
+      iterate_over_points(1, e.shiftKey);
+    } else if (['ArrowUp', 'ArrowLeft'].indexOf(e.key)>-1) {
+      iterate_over_points(-1, e.shiftKey);
+    }
+  })
 }
+
 
 function get_violin_y(xpos, d) {
   if (!(d['geno_str'] in violin_y_pos_counter)) {
@@ -650,8 +713,13 @@ function read_files(fpath) {
   console.log('starting yoda viz...')
   d3.csv(fpath).then(function(data) {
     main_data = data;
+    variants_in_selection = main_data.map(d => d.variant);
     use_data = main_data;
     console.log(data.slice(0,10));
+    aq.loadArrow('data/Kd_data/20210104_fluB_all.arrow').then((td) => kd_data['fluB']=td);
+    aq.loadArrow('data/Kd_data/20210104_h1_all.arrow').then((td) => kd_data['H1']=td);
+    aq.loadArrow('data/Kd_data/20210104_h3_all.arrow').then((td) => kd_data['H3']=td);
+    /*
     d3.csv('data/Kd_data/20210104_fluB_all.csv').then(function(flub_data) {
       for (let row of flub_data) {
         kd_data['fluB'][row['variant']] = row;
@@ -668,6 +736,8 @@ function read_files(fpath) {
         }); 
       }); 
     }); 
+    */
+    setup_viz();
   });
 }
 
