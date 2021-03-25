@@ -19,6 +19,7 @@ var alleles = [
 var allele_divs = [];
 var v;
 
+var clicked_variant;
 var variants_in_selection;
 var variant_selected_index = 0;
 
@@ -313,7 +314,14 @@ function highlight_variant(variant) {
       d3.select('#new_allele_'+String(i)).classed('active_allele', variant[i]=='1');
     }
   } else {
-    d3.selectAll('.allele').classed('active_allele', false);
+    if (clicked_variant) {
+      for (let i=0; i<clicked_variant.length; i++) {
+        d3.select('#wt_allele_'+String(i)).classed('active_allele', clicked_variant[i]=='0');
+        d3.select('#new_allele_'+String(i)).classed('active_allele', clicked_variant[i]=='1');
+      }
+    } else {
+      d3.selectAll('.allele').classed('active_allele', false);
+    }
   }
 }
 
@@ -341,6 +349,8 @@ function click_variant(variant) {
     .attr('fill', colorMap[variant].formatHex())
     .attr('opacity', 1);
   variant_selected_index = variants_in_selection.indexOf(variant);
+  clicked_variant = variant;
+  highlight_variant(variant);
   console.log('clicked on', variant);
   let tmp_row = kd_data[kd_var].params({v_focus: variant}).filter((d,$) => d.variant == $.v_focus);
   v = tmp_row;
