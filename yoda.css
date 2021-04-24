@@ -30,7 +30,6 @@
   left: 300px;
   top: 50px;
   width: 600px;
-  height: 400px;
   z-index: 2;
   text-align: center;
   background-color: #DDD;
@@ -38,6 +37,10 @@
   border-radius: 30px;
   padding: 15px;
   display: none;
+}
+
+#yoda_about_div p {
+  text-align: left;
 }
 
 #about_x_out {
@@ -102,7 +105,7 @@
 
 #yoda_everything {
   width: 1200px;
-  height: 800px;
+  height: 650px;
   position: relative;
   margin: 0px auto;
 }
@@ -112,15 +115,7 @@
   left: 80px;
   top: 50px;
   width: 220px;
-  height: 750px;
-}
-
-#yoda_right_bar {
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  width: 200px;
-  height: 800px;
+  height: 650px;
 }
 
 #yoda_violin_canvas {
@@ -145,15 +140,15 @@
   left: 300px;
   top: 40px;
   width: 800px;
-  height: 600px;
+  height: 580px;
 }
 
 #yoda_svg {
   position: absolute;
   left: 300px;
   top: 40px;
-  width: 800px;
-  height: 850px;
+  width: 900px;
+  height: 650px;
 }
 
 /*#endregion*/
@@ -167,7 +162,7 @@
 
 .allele_div {
   width: 220px;
-  height: 32px;
+  height: 33px;
   margin: 0px;
   position: relative;
   font-size: 19px;
@@ -240,13 +235,28 @@
 }
 
 #kd_axis {
-  font-size: 18px;
+  font-size: 16px;
+}
+
+.kd_curve_axis {
+  font-size: 16px;
 }
 
 .x_axis_label {
   font: 20px sans-serif; 
   fill: black; 
   text-anchor: middle;
+}
+
+.y_axis_label {
+  font: 20px sans-serif; 
+  fill: black; 
+  text-anchor: end;
+}
+
+#kd_curve_title {
+  font: 13px sans-serif;
+  fill: #333;
 }
 
 .germ_som_text {
