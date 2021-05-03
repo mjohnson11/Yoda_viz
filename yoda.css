@@ -161,7 +161,7 @@
 }
 
 .allele_div {
-  width: 220px;
+  width: 200px;
   height: 33px;
   margin: 0px;
   position: relative;
@@ -181,6 +181,8 @@
   width: 21px;
   height: 21px;
   margin-top: 3px;
+  margin-left:15px;
+  margin-right:8px;
   border-radius: 50%;
   border: 2px solid black;
 }
