@@ -7,18 +7,18 @@
 
   <!-- CSS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <link rel="stylesheet" href="yoda.css">
+  <link rel="stylesheet" href="/yoda_browser/yoda.css">
 
   <!-- JS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/apache-arrow@3"></script>
   <script src="https://cdn.jsdelivr.net/npm/arquero@latest"></script>
-  <script src="yoda_6261.js"></script>
+  <script src="/yoda_browser/yoda_6261.js"></script>
   <script src="https://unpkg.com/ngl@0.10.4/dist/ngl.js"></script>
 
 </head>
-<body onload="read_files('data/20210504_fdl_6261_simpler.csv')">
+<body onload="read_files('/yoda_browser/data/20210504_fdl_6261_simpler.csv')">
   <div id="yoda_everything">
     <div class='antigen_button antigen_active' id='antigen_H1' onclick="kd_for('H1')">H1</div>
     <div class='antigen_button' id='antigen_H9' onclick="kd_for('H9')">H9</div>
@@ -36,7 +36,7 @@
         Using Tite-Seq, we measured the KD (affinity constant) of a combinatorial library based on an anti-influenza broadly neutralizing antibody, CR-6261, to two distinct influenza antigens. This library contains all possible combinations of 11 mutations present in the somatic CR-6261 sequence. The KD for each antigen were measured in biological triplicate. Here the average KD are displayed in a force-directed graph, where each variant (node) is connected to its 16 single-mutation neighbors, with edge weight inversely proportional to change in binding affinity to H1 (edges not shown for clarity) such that variants with similar genotypes and phenotypes will tend to cluster.See the video below for examples of how you can interact with the visualization.
       </p>
       <video width="640" height="480" controls>
-        <source src="video/browser_demo.mov" type="video/mp4">
+        <source src="/yoda_browser/video/browser_demo.mov" type="video/mp4">
       Your browser does not support the video tag.
       </video>
     </div>

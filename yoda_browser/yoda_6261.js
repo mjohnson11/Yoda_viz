@@ -723,8 +723,8 @@ function read_files(fpath) {
     variants_in_selection = main_data.map(d => d.variant);
     use_data = main_data;
     console.log(data.slice(0,10));
-    aq.loadArrow('data/Kd_data/6261_20210323_h1_all.arrow').then((td) => kd_data['H1']=td);
-    aq.loadArrow('data/Kd_data/6261_20210323_h9_all.arrow').then((td) => kd_data['H9']=td);
+    aq.loadArrow('/yoda_browser/data/Kd_data/6261_20210323_h1_all.arrow').then((td) => kd_data['H1']=td);
+    aq.loadArrow('/yoda_browser/data/Kd_data/6261_20210323_h9_all.arrow').then((td) => kd_data['H9']=td);
     d3.select('#loading_message').style('display', 'none');
     setup_viz();
   });

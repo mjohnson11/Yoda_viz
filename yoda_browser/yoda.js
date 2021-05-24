@@ -746,9 +746,9 @@ function read_files(fpath) {
     variants_in_selection = main_data.map(d => d.variant);
     use_data = main_data;
     console.log(data.slice(0,10));
-    aq.loadArrow('data/Kd_data/20210104_h1_all.arrow').then((td) => kd_data['H1']=td);
-    aq.loadArrow('data/Kd_data/20210104_fluB_all.arrow').then((td) => kd_data['FluB']=td);
-    aq.loadArrow('data/Kd_data/20210104_h3_all.arrow').then((td) => kd_data['H3']=td);
+    aq.loadArrow('/yoda_browser/data/Kd_data/20210104_h1_all.arrow').then((td) => kd_data['H1']=td);
+    aq.loadArrow('/yoda_browser/data/Kd_data/20210104_fluB_all.arrow').then((td) => kd_data['FluB']=td);
+    aq.loadArrow('/yoda_browser/data/Kd_data/20210104_h3_all.arrow').then((td) => kd_data['H3']=td);
     d3.select('#loading_message').style('display', 'none');
     setup_viz();
   });
