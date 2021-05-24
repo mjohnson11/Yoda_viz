@@ -1,4 +1,20 @@
-var alleles = ['T_29_P', 'S_35_R', 'A_65_T', 'N_66_K', 'Q_69_P', 'K_82_D', 'S_83_F', 'T_84_A', 'S_85_G', 'A_87_V', 'L_112.1_V'];
+var alleles = [
+  'F_30_S',
+  'S_35_N',
+  'S_36_N',
+  'I_57_S',
+  'T_64_S',
+  'A_65_T',
+  'N_66_A',
+  'T_79_S',
+  'K_82_I',
+  'S_83_F',
+  'T_84_S',
+  'S_85_N',
+  'S_92_N',
+  'R_95_T',
+  'Y_103_F',
+  'Y_113_S'];
 
 var allele_divs = [];
 var v;
@@ -15,6 +31,12 @@ for (let i=0; i<alleles.length; i++) {
 
 var color_wheel = ["#0173b2","#de8f05","#029e73","#d55e00","#cc78bc","#ca9161","#ece133","#56b4e9"];
 
+var color_variants = {'0000000000000000': '#FF0000',
+                      '1111111111111111': '#0000FF'};
+
+var annotate_variants = {'0000000000000000': 'Germline',
+                         '1111111111111111': 'Somatic'};
+
 var color_wheel_rgb = [];
 for (let c of color_wheel) {
   color_wheel_rgb.push(d3.color(c));
@@ -23,9 +45,10 @@ for (let c of color_wheel) {
 var main_data;
 var main_svg;
 var use_data;
-var kd_data = {'H1': {}, 'H9': {}};
+var kd_data = {'FluB': {}, 'H1': {}, 'H3': {}};
 var kd_conc_map = {
-  'H9': [-14, -12, -11.5, -11, -10.5, -10, -9.5, -9, -8.5,-8, -7.5, -7],
+  'H3': [-14, -11, -10.5, -10, -9.5, -9, -8.5,-8, -7.5, -7, -6.5, -6],
+  'FluB': [-14, -11, -10.5, -10, -9.5, -9, -8.5,-8, -7.5, -7, -6.5, -6],
   'H1': [-14, -12, -11.5, -11, -10.5, -10, -9.5, -9, -8.5,-8, -7.5, -7]
 }
 
@@ -489,8 +512,8 @@ function setup_interaction() {
   main_svg.append('text')
     .attr('class', 'germ_som_text')
     .attr('dominant-baseline', 'hanging')
-    .attr('x', xs(data_by_variant['00000000000']['fdl_x'])-15)
-    .attr('y', 250)
+    .attr('x', xs(data_by_variant['0000000000000000']['fdl_x'])+55)
+    .attr('y', 470)
     .style('inline-size', '100px')
     .html('Germline');
 
@@ -498,16 +521,16 @@ function setup_interaction() {
     .attr('class', 'germ_som_line')
     .attr('stroke', '#555555')
     .attr('stroke-width', 1)
-    .attr('x1', xs(data_by_variant['00000000000']['fdl_x'])-10)
-    .attr('y1', 267)
-    .attr('x2', xs(data_by_variant['00000000000']['fdl_x']))
-    .attr('y2', ys(data_by_variant['00000000000']['fdl_y']));
+    .attr('x1', xs(data_by_variant['0000000000000000']['fdl_x'])+20)
+    .attr('y1', 465)
+    .attr('x2', xs(data_by_variant['0000000000000000']['fdl_x']))
+    .attr('y2', ys(data_by_variant['0000000000000000']['fdl_y']));
 
   main_svg.append('text')
     .attr('class', 'germ_som_text')
     .attr('dominant-baseline', 'hanging')
-    .attr('x', xs(data_by_variant['11111111111']['fdl_x'])+70)
-    .attr('y', 343)
+    .attr('x', xs(data_by_variant['1111111111111111']['fdl_x'])+70)
+    .attr('y', 243)
     .style('inline-size', '100px')
     .html('Somatic');
 
@@ -515,10 +538,10 @@ function setup_interaction() {
     .attr('class', 'germ_som_line')
     .attr('stroke', '#555555')
     .attr('stroke-width', 1)
-    .attr('x1', xs(data_by_variant['11111111111']['fdl_x'])+35)
-    .attr('y1', 360)
-    .attr('x2', xs(data_by_variant['11111111111']['fdl_x']))
-    .attr('y2', ys(data_by_variant['11111111111']['fdl_y']));
+    .attr('x1', xs(data_by_variant['1111111111111111']['fdl_x'])+35)
+    .attr('y1', 260)
+    .attr('x2', xs(data_by_variant['1111111111111111']['fdl_x']))
+    .attr('y2', ys(data_by_variant['1111111111111111']['fdl_y']));
   
   
   main_svg.on('mousemove', function(event, d) {
@@ -638,7 +661,7 @@ function get_violin_y(xpos, d) {
 
 function kd_for(kd_var_tmp) {
   kd_var = kd_var_tmp;
-  if ((kd_var == 'H1') || (kd_var == 'H9')) {
+  if (kd_var == 'H1') {
     x_by_kd = d3.scaleLinear().domain([7,10]).range([630,790]);
     color_by_kd = d3.scaleSequential(d3.interpolateViridis).domain([7,10]);
   } else {
@@ -693,7 +716,7 @@ function setup_viz() {
     x_domain[0] = x_domain[0] - (y_d_dif-x_d_dif)/2 - x_d_dif/20;
     x_domain[1] = x_domain[1] + (y_d_dif-x_d_dif)/2 + x_d_dif/20;
   }
-  xs = d3.scaleLinear().domain(x_domain).range([0, 600]);
+  xs = d3.scaleLinear().domain(x_domain).range([600, 0]);
   ys = d3.scaleLinear().domain(y_domain).range([0, 600]);
   this.variants_count = main_data.length;
   for (let d of main_data) {
@@ -723,8 +746,10 @@ function read_files(fpath) {
     variants_in_selection = main_data.map(d => d.variant);
     use_data = main_data;
     console.log(data.slice(0,10));
-    aq.loadArrow('data/Kd_data/6261_20210323_h1_all.arrow').then((td) => kd_data['H1']=td);
-    aq.loadArrow('data/Kd_data/6261_20210323_h9_all.arrow').then((td) => kd_data['H9']=td);
+    aq.loadArrow('data/Kd_data/20210104_h1_all.arrow').then((td) => kd_data['H1']=td);
+    aq.loadArrow('data/Kd_data/20210104_fluB_all.arrow').then((td) => kd_data['FluB']=td);
+    aq.loadArrow('data/Kd_data/20210104_h3_all.arrow').then((td) => kd_data['H3']=td);
+    d3.select('#loading_message').style('display', 'none');
     setup_viz();
   });
 }
