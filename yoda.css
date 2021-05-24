@@ -2,6 +2,13 @@
 
 /*#region*/ /* NON GRAPH OVERALL LAYOUT */
 
+#yoda_everything {
+  width: 1200px;
+  height: 650px;
+  position: relative;
+  margin: 0px auto;
+}
+
 #yoda_title {
   font-size: 24px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -27,15 +34,15 @@
 #yoda_about_div {
   font-size: 1.2em;
   position: absolute;
-  left: 300px;
-  top: 50px;
-  width: 600px;
+  left: 50px;
+  top: 5px;
+  width: 1028px;
   z-index: 2;
   text-align: center;
   background-color: #DDD;
   border: 4px solid black;
   border-radius: 30px;
-  padding: 15px;
+  padding: 35px;
   display: none;
 }
 
@@ -101,18 +108,6 @@
 
 #yoda_about:hover {
   opacity: 0.5;
-}
-
-#yoda_everything {
-  width: 100%;
-  position: relative;
-}
-
-#yoda_everything {
-  width: 1200px;
-  height: 650px;
-  position: relative;
-  margin: 0px auto;
 }
 
 #yoda_left_bar {
