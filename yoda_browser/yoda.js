@@ -615,7 +615,7 @@ function setup_interaction() {
     .attr('class', 'x_axis_label')
     .attr('x', kd_curve_x(-10))
     .attr('y', kd_curve_y(2)+50)
-    .html('-log[HA], M');
+    .html('log[HA], M');
 
   main_svg.append('text')
     .attr('id', 'kd_curve_title')
