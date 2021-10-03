@@ -128,6 +128,41 @@ function reset_violin_y() {
   }
 }
 
+function label_genos() {
+  d3.select("#switch_holder").style('display', alleles_colored.length==0 ? 'none' : 'block');
+  d3.selectAll('.geno_label').remove();
+  for (let i=0; i<alleles_colored.length; i++) {
+    // making the ylabels for the violin plot
+    main_svg.selectAll('.NOTHING')
+      .data(Object.keys(violin_y_pos_counter))
+      .enter()
+      .append('text')
+        .attr('class', 'geno_label')
+        .attr('x', 800+i*40)
+        .attr('y', function(d) { return violin_y_pos_counter[d][0]+10; })
+        .html(function(d) { 
+          if (document.getElementById("geno_display_switch").checked) {
+            return d.split(" ")[i]
+          } else {
+            return alleles[alleles_colored[i]].split('_')[parseInt(d.split(" ")[i])*2];
+          }
+        });
+    //making headings for those labels (locus #s)
+    main_svg.append('text')
+      .attr('class', 'geno_label')
+      .attr('x', 800+i*40)
+      .attr('y', violin_y(0)+20)
+      .html(alleles[alleles_colored[i]].split('_')[1]);
+    if (i==0) {
+      main_svg.append('text')
+        .attr('class', 'geno_label')
+        .attr('x', 750)
+        .attr('y', violin_y(0)+20)
+        .html('Locus:');
+    }
+  }
+}
+
 function color_data(first_time=false) {
   for (let d of main_data) {
     let geno_str = ''; // genotype string
@@ -154,33 +189,7 @@ function color_data(first_time=false) {
     if (first_time) d['a'] = 255;
   }
   reset_violin_y();
-  d3.selectAll('.geno_label').remove();
-  for (let i=0; i<alleles_colored.length; i++) {
-    // making the ylabels for the violin plot
-    main_svg.selectAll('.NOTHING')
-      .data(Object.keys(violin_y_pos_counter))
-      .enter()
-      .append('text')
-        .attr('class', 'geno_label')
-        .attr('x', 800+i*40)
-        .attr('y', function(d) { return violin_y_pos_counter[d][0]+10; })
-        .html(function(d) { return d.split(" ")[i]; });
-    //making headings for those labels (locus #s)
-    main_svg.append('text')
-      .attr('class', 'geno_label')
-      .attr('x', 800+i*40)
-      .attr('y', violin_y(0)+20)
-      .html(alleles[alleles_colored[i]].split('_')[1]);
-    if (i==0) {
-      main_svg.append('text')
-        .attr('class', 'geno_label')
-        .attr('x', 750)
-        .attr('y', violin_y(0)+20)
-        .html('Locus:');
-    }
-  }
-  
-
+  label_genos();
   draw_data();
   
 }
@@ -619,6 +628,8 @@ function setup_interaction() {
       iterate_over_points(-1, e.shiftKey);
     }
   })
+
+  d3.select("#geno_display_switch").on("change", label_genos);
 }
 
 

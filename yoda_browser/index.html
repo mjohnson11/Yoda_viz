@@ -29,6 +29,7 @@
     <p id='yoda_about' onclick="toggle_about()">ABOUT</p>
     <p id='loading_message'>DATA LOADING...</p>
     <div id="yoda_left_bar"></div>
+    
     <div id="yoda_ngl_viewer"></div>
     <canvas id="yoda_canvas" width="800" height="580"></canvas>
     <svg id="yoda_svg" width="900" height="650"></svg>
@@ -42,6 +43,13 @@
         <source src="/yoda_browser/video/browser_demo.mov" type="video/mp4">
       Your browser does not support the video tag.
       </video>
+    </div>
+    <div id="switch_holder">
+      <p id="switch_label">Binary genotypes</p>
+      <label class="switch">
+        <input id="geno_display_switch" type="checkbox">
+        <span class="slider"></span>
+      </label>
     </div>
   </div>
 </body>
